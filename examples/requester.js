@@ -1,34 +1,23 @@
-'use strict';
+const Servious = require("../dist/index.js"); // "servious" in production"
+const service = new Servious();
 
-const Requester = require('../').Requester;
+let stats = require("measured-core").createCollection();
 
-const randomRequest = new Requester({
-  name: 'core-service-req',
-  // requests: ['randomRequest', 'promised request'],
+service.addLink("queue-service", {
+  "namespace": "local",
+  "requests": [ "generate-number" ]
 });
 
-let total = 0
+const sendRequest = async () => {
+  const req = await service.send("queue-service", "generate-number", { "payload": {} });
 
-function makeRequest() {
-  total++
-  const req = {
-    type: 'randomRequest',
-    val: total
-  };
-  console.log('sending request cb', req);
-  randomRequest.send(req, function(res) {
-  });
+  stats.meter("requestsPerSecond").mark();
+  // console.log(`Received response ${req}`);
+};
 
-  const reqPromise = {
-    type: 'promised request',
-    val: total++,
-  };
+setInterval(sendRequest, 1);
+setInterval(sendRequest, 1);
 
-  randomRequest.send(reqPromise).then((res) => {
-    console.log('request promise', reqPromise, 'answer', res);
-  }).catch((e) => console.log('rejected', e));
-}
-
-makeRequest();
-
-setInterval(makeRequest, 1);
+setInterval(function() {
+  console.log(stats.toJSON());
+}, 1000);

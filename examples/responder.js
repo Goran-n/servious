@@ -1,29 +1,14 @@
-'use strict';
+const Servious = require("../dist/index"); // "servious" in production"
+const service = new Servious();
 
-const Responder = require('../').Responder;
-
-// Instantiate a new Responder component.
-const randomResponder = new Responder({
-  name: 'core-service-res',
-  // namespace: 'rnd',
-  respondsTo: ['randomRequest', 'promised request'], // types of requests this responder
-  // can respond to.
+// Register this service as a responder
+service.registerResponder({
+  "name": "queue-service",
+  "namespace": "local",
+  "respondsTo": [ "generate-number" ]
 });
 
-// request handlers are like any event handler.
-randomResponder.on('randomRequest', function(req, cb) {
-  const answer = ~~(Math.random() * 10);
-  console.log('request', req.val, 'answering with', answer);
-  cb(answer);
-});
-
-// request handlers are like any event handler.
-randomResponder.on('promised request', function(req) {
-  const answer = ~~(Math.random() * 10);
-
-  return new Promise((resolve, reject) => {
-    console.log('promise request', req.val, 'answering with', answer);
-    resolve(answer);
-    // reject(answer);
-  });
+service.on("generate-number", async (req) => {
+  console.log(`Received request ${JSON.stringify(req)}`);
+  return Math.random();
 });
