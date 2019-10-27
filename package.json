@@ -1,14 +1,21 @@
 {
   "name": "servious",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "zero configuration microservices for node.js",
   "author": "Nikic Company Ltd",
   "license": "ISC",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Goran-n/servious.git"
+  },
   "scripts": {
-    "build": "babel src -D -d dist",
+    "build": "babel src -D --watch -d dist",
+    "start-dev": "nodemon --exec babel-node src/index.js",
     "start-requester": "nodemon --exec babel-node examples/requester.js",
     "start-responder": "nodemon --exec babel-node examples/responder.js",
+    "start-zprod": "nodemon --exec babel-node examples/z-prod.js",
+    "start-zwork": "nodemon --exec babel-node examples/z-work.js",
     "clean": "rm -rf dist",
     "coverage": "nyc -x=\"**/examples/*\" -x=\"**/*balanced*.js\" -x=\"**/test/*.js\" -x=\"**/lib/*.js\" report",
     "lint": "eslint src test",
@@ -25,46 +32,39 @@
   "dependencies": {
     "@dashersw/axon": "2.0.5",
     "@dashersw/node-discover": "^1.0.4",
+    "@hapi/boom": "latest",
+    "@hapi/hoek": "^8.3.2",
+    "@hapi/joi": "latest",
+    "axon": "^2.0.3",
     "colors": "1.4.0",
-    "core-js": "^3.3.3",
+    "core-js": "^3.3.4",
     "eventemitter2": "^5.0.1",
     "lodash": "^4.17.15",
+    "measured-core": "^1.51.1",
+    "node-discover": "^1.0.0",
     "portfinder": "^1.0.25",
+    "punt": "^2.3.0",
     "socket.io": "^2.3.0",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
     "async": "^3.1.0",
-    "ava": "^2.4.0",
+    "babel-eslint": "^10.0.3",
+    "babel-preset-latest-node": "^3.2.1",
     "commander": "^3.0.2",
     "coveralls": "^3.0.7",
-    "eslint": "^6.5.1",
-    "eslint-config-google": "^0.14.0",
+    "eslint": "^6.6.0",
     "humanize-number": "^0.0.2",
     "nyc": "^14.1.1",
     "randomstring": "^1.1.5",
     "request": "^2.88.0",
     "sinon": "^7.5.0",
     "socket.io-client": "^2.3.0"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/env",
-        {
-          "targets": {
-            "node": "12"
-          },
-          "useBuiltIns": "usage",
-          "corejs": "2",
-          "exclude": [
-            "es6.promise"
-          ]
-        }
-      ]
-    ]
   }
 }
