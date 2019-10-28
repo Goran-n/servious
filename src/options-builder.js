@@ -64,9 +64,5 @@ module.exports = (options) => {
     environmentSettings.useHostNames = true;
   });
 
-  console.log(environmentSettings);
-  console.log(options);
-  console.log(defaultOptions);
-
   return { ...defaultOptions, ...environmentSettings, ...options };
 };
