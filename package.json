@@ -36,7 +36,7 @@
     "@hapi/hoek": "^8.3.2",
     "@hapi/joi": "latest",
     "axon": "^2.0.3",
-    "colors": "1.4.0",
+    "colors": "^1.4.0",
     "core-js": "^3.3.4",
     "eventemitter2": "^5.0.1",
     "lodash": "^4.17.15",
