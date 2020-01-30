@@ -2,27 +2,27 @@ module.exports = function (api) {
   api.cache(true);
 
   const presets = [
-    [ "latest-node", { "target": "current" } ],
-    "@babel/preset-env"
+    [ 'latest-node', { target: 'current' } ],
+    '@babel/preset-env'
   ];
   const plugins = [
-    // [
-    //   "@babel/plugin-transform-runtime",
-    //   {
-    //     "absoluteRuntime": false,
-    //     "corejs": false,
-    //     "helpers": true,
-    //     "regenerator": true,
-    //     "useESModules": false
-    //   }
-    // ],
     [
-      "@babel/plugin-proposal-class-properties",
+      '@babel/plugin-transform-runtime',
       {
-        "loose": true
+        absoluteRuntime: false,
+        corejs: false,
+        helpers: true,
+        regenerator: true,
+        useESModules: false
       }
     ],
-    "@babel/plugin-proposal-throw-expressions"
+    [
+      '@babel/plugin-proposal-class-properties',
+      {
+        loose: true
+      }
+    ],
+    '@babel/plugin-proposal-throw-expressions'
   ];
 
   return {
