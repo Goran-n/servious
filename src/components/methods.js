@@ -1,12 +1,12 @@
 
 
-const Hoek = require("@hapi/hoek");
+const Hoek = require('@hapi/hoek');
 
-const Config = require("../config");
+const Config = require('../config');
 
 
 const internals = {
-  "methodNameRx": /^[_$a-zA-Z][$\w]*(?:\.[_$a-zA-Z][$\w]*)*$/
+  methodNameRx: /^[_$a-zA-Z][$\w]*(?:\.[_$a-zA-Z][$\w]*)*$/
 };
 
 
@@ -19,7 +19,7 @@ exports = module.exports = class {
 
   add(name, method, options, realm) {
 
-    if (typeof name !== "object") {
+    if (typeof name !== 'object') {
       return this._add(name, method, options, realm);
     }
 
@@ -28,21 +28,21 @@ exports = module.exports = class {
     const items = [].concat(name);
 
     for (let item of items) {
-      item = Config.apply("methodObject", item);
+      item = Config.apply('methodObject', item);
       this._add(item.name, item.method, item.options || {}, realm);
     }
   }
 
   _add(name, method, options, realm) {
 
-    Hoek.assert(typeof method === "function", "method must be a function");
-    Hoek.assert(typeof name === "string", "name must be a string");
-    Hoek.assert(name.match(internals.methodNameRx), "Invalid name:", name);
-    Hoek.assert(!Hoek.reach(this.methods, name, { "functions": false }), "Server method function name already exists:", name);
+    Hoek.assert(typeof method === 'function', 'method must be a function');
+    Hoek.assert(typeof name === 'string', 'name must be a string');
+    Hoek.assert(name.match(internals.methodNameRx), 'Invalid name:', name);
+    Hoek.assert(!Hoek.reach(this.methods, name, { functions: false }), 'Server method function name already exists:', name);
 
-    options = Config.apply("method", options, name);
+    options = Config.apply('method', options, name);
 
-    const settings = Hoek.clone(options, { "shallow": [ "bind" ] });
+    const settings = Hoek.clone(options, { shallow: [ 'bind' ] });
 
     settings.generateKey = settings.generateKey || internals.generateKey;
 
@@ -54,8 +54,8 @@ exports = module.exports = class {
 
     // Cached
 
-    Hoek.assert(!settings.cache.generateFunc, "Cannot set generateFunc with method caching:", name);
-    Hoek.assert(settings.cache.generateTimeout !== undefined, "Method caching requires a timeout value in generateTimeout:", name);
+    Hoek.assert(!settings.cache.generateFunc, 'Cannot set generateFunc with method caching:', name);
+    Hoek.assert(settings.cache.generateTimeout !== undefined, 'Method caching requires a timeout value in generateTimeout:', name);
 
     settings.cache.generateFunc = (id, flags) => bound(...id.args, flags);
     const cache = this.core._cachePolicy(settings.cache, `#${ name}`);
@@ -64,25 +64,25 @@ exports = module.exports = class {
 
       const key = settings.generateKey.apply(bind, args);
 
-      if (typeof key !== "string") {
+      if (typeof key !== 'string') {
         return Promise.reject(`Invalid Method key when invoking ${name} - ${args}`);
       }
 
-      return cache.get({ "id": key, args });
+      return cache.get({ id: key, args });
     };
 
     func.cache = {
-      "drop": function (...args) {
+      drop: function (...args) {
 
         const key = settings.generateKey.apply(bind, args);
 
-        if (typeof key !== "string") {
+        if (typeof key !== 'string') {
           return Promise.reject(`Invalid Method key when invoking ${name} - ${args}`);
         }
 
         return cache.drop(key);
       },
-      "stats": cache.stats
+      stats: cache.stats
     };
 
     this._assign(name, func, func);
@@ -90,7 +90,7 @@ exports = module.exports = class {
 
   _assign(name, method) {
 
-    const path = name.split(".");
+    const path = name.split('.');
 
     let ref = this.methods;
 
@@ -105,12 +105,12 @@ exports = module.exports = class {
 };
 
 
-internals.supportedArgs = [ "string", "number", "boolean" ];
+internals.supportedArgs = [ 'string', 'number', 'boolean' ];
 
 
 internals.generateKey = function (...args) {
 
-  let key = "";
+  let key = '';
 
   for (let i = 0; i < args.length; ++i) {
     const arg = args[ i ];
@@ -119,7 +119,7 @@ internals.generateKey = function (...args) {
       return null;
     }
 
-    key = key + (i ? ":" : "") + encodeURIComponent(arg.toString());
+    key = key + (i ? ':' : '') + encodeURIComponent(arg.toString());
   }
 
   return key;

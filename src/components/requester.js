@@ -1,17 +1,17 @@
-const axon = require("@dashersw/axon");
-const debug = require("debug")("axon:req");
-const Configurable = require("./configurable");
-const Monitorable = require("./monitorable");
-const Component = require("./component");
+const axon = require('@dashersw/axon');
+const debug = require('debug')('axon:req');
+const Configurable = require('./configurable');
+const Monitorable = require('./monitorable');
+const Component = require('./component');
 
-const SUBSET_IDENTIFIER = "__subset";
+const SUBSET_IDENTIFIER = '__subset';
 
 export default class Requester extends Monitorable(Configurable(Component)) {
   constructor(advertisement, explorerOptions) {
     super(advertisement, explorerOptions);
 
     this.sock = new axon.types[ this.type ]();
-    this.sock.set("retry timeout", 0);
+    this.sock.set('retry timeout', 0);
     this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT;
 
     this.sock.send = this.socketSend.bind(this);
@@ -38,7 +38,7 @@ export default class Requester extends Monitorable(Configurable(Component)) {
     // Enqueue if no socks connected yet
 
     if (!socks || !socks.length) {
-      debug("no connected peers");
+      debug('no connected peers');
       return this.sock.enqueue(args);
     }
 
@@ -82,7 +82,7 @@ export default class Requester extends Monitorable(Configurable(Component)) {
   }
 
   send(...args) {
-    const hasCallback = typeof args[ args.length - 1 ] == "function";
+    const hasCallback = typeof args[ args.length - 1 ] == 'function';
     const timeout = args[ 0 ].__timeout || this.timeout;
 
     if (hasCallback) {
@@ -100,10 +100,10 @@ export default class Requester extends Monitorable(Configurable(Component)) {
   }
 
   get type() {
-    return "req";
+    return 'req';
   }
   get oppo() {
-    return "rep";
+    return 'rep';
   }
 }
 
@@ -125,7 +125,7 @@ function sendOverSocket(sock, timeout, ...args) {
     // Remove the request callback
     delete sock.callbacks[ messageCallback.id ];
 
-    cb(new Error("Request timed out."));
+    cb(new Error('Request timed out.'));
   }, timeout);
 
   const messageCallback = (...args) => {

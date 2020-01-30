@@ -1,13 +1,13 @@
-const axon = require("@dashersw/axon");
+const axon = require('@dashersw/axon');
 
 module.exports = (Base) => class Monitorable extends Base {
   startExplorer() {
     super.startExplorer();
 
-    this.explorer.on("added", (obj) => {
+    this.explorer.on('added', (obj) => {
       const adv = obj.advertisement;
 
-      if (adv.type != "monitor" || !this.advertisement.key.startsWith(adv.key)) {
+      if (adv.type != 'monitor' || !this.advertisement.key.startsWith(adv.key)) {
         return;
       }
 
@@ -17,7 +17,7 @@ module.exports = (Base) => class Monitorable extends Base {
   onMonitorAdded(obj) {
     if (!this.monitorStatusPublisher) {
       this.monitorStatusPublisher = new axon.PubEmitterSocket();
-      this.monitorStatusPublisher.sock.set("retry timeout", 0);
+      this.monitorStatusPublisher.sock.set('retry timeout', 0);
       const statusInterval = this.explorerOptions.statusInterval || 5000;
 
       this.monitorInterval = setInterval(() => this.onMonitorInterval(), statusInterval);
@@ -52,9 +52,9 @@ module.exports = (Base) => class Monitorable extends Base {
       }
     });
 
-    this.monitorStatusPublisher.emit("status", {
-      "id": this.explorer.me.id,
-      "nodes": nodes
+    this.monitorStatusPublisher.emit('status', {
+      id: this.explorer.me.id,
+      nodes: nodes
     });
   }
 };
