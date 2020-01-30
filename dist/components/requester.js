@@ -1,68 +1,61 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+var _get2 = _interopRequireDefault(require("@babel/runtime/helpers/get"));
 
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+var axon = require('@dashersw/axon');
 
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var debug = require('debug')('axon:req');
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+var Configurable = require('./configurable');
 
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Monitorable = require('./monitorable');
 
-var axon = require("@dashersw/axon");
+var Component = require('./component');
 
-var debug = require("debug")("axon:req");
-
-var Configurable = require("./configurable");
-
-var Monitorable = require("./monitorable");
-
-var Component = require("./component");
-
-var SUBSET_IDENTIFIER = "__subset";
+var SUBSET_IDENTIFIER = '__subset';
 
 var Requester =
 /*#__PURE__*/
 function (_Monitorable) {
-  _inherits(Requester, _Monitorable);
+  (0, _inherits2["default"])(Requester, _Monitorable);
 
   function Requester(advertisement, explorerOptions) {
     var _this;
 
-    _classCallCheck(this, Requester);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Requester).call(this, advertisement, explorerOptions));
+    (0, _classCallCheck2["default"])(this, Requester);
+    _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Requester).call(this, advertisement, explorerOptions));
     _this.sock = new axon.types[_this.type]();
 
-    _this.sock.set("retry timeout", 0);
+    _this.sock.set('retry timeout', 0);
 
     _this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT;
-    _this.sock.send = _this.socketSend.bind(_assertThisInitialized(_this));
+    _this.sock.send = _this.socketSend.bind((0, _assertThisInitialized2["default"])(_this));
 
     _this.startExplorer();
 
     return _this;
   }
 
-  _createClass(Requester, [{
+  (0, _createClass2["default"])(Requester, [{
     key: "filterSubsetInSocks",
     value: function filterSubsetInSocks(subset, socks) {
       // Find correct nodes
@@ -89,7 +82,7 @@ function (_Monitorable) {
       }
 
       if (!socks || !socks.length) {
-        debug("no connected peers");
+        debug('no connected peers');
         return this.sock.enqueue(args);
       }
 
@@ -116,8 +109,7 @@ function (_Monitorable) {
     value: function onAdded(obj) {
       var _this2 = this;
 
-      _get(_getPrototypeOf(Requester.prototype), "onAdded", this).call(this, obj);
-
+      (0, _get2["default"])((0, _getPrototypeOf2["default"])(Requester.prototype), "onAdded", this).call(this, obj);
       var address = this.constructor.useHostNames ? obj.hostName : obj.address;
       var alreadyConnected = this.sock.socks.some(function (s) {
         return (_this2.constructor.useHostNames ? s._host == obj.hostName : s.remoteAddress == address) && s.remotePort == obj.advertisement.port;
@@ -138,7 +130,7 @@ function (_Monitorable) {
         args[_key2] = arguments[_key2];
       }
 
-      var hasCallback = typeof args[args.length - 1] == "function";
+      var hasCallback = typeof args[args.length - 1] == 'function';
       var timeout = args[0].__timeout || this.timeout;
 
       if (hasCallback) {
@@ -158,15 +150,14 @@ function (_Monitorable) {
   }, {
     key: "type",
     get: function get() {
-      return "req";
+      return 'req';
     }
   }, {
     key: "oppo",
     get: function get() {
-      return "rep";
+      return 'rep';
     }
   }]);
-
   return Requester;
 }(Monitorable(Configurable(Component)));
 
@@ -194,7 +185,7 @@ function sendOverSocket(sock, timeout) {
 
 
     delete sock.callbacks[messageCallback.id];
-    cb(new Error("Request timed out."));
+    cb(new Error('Request timed out.'));
   }, timeout);
 
   var messageCallback = function messageCallback() {

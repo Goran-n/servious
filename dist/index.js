@@ -1,36 +1,30 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _typeof2 = _interopRequireDefault(require("@babel/runtime/helpers/typeof"));
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
 var _explorer = _interopRequireDefault(require("./components/explorer"));
 
 var _requester = _interopRequireDefault(require("./components/requester"));
 
 var _responder = _interopRequireDefault(require("./components/responder"));
 
-var _methods = _interopRequireDefault(require("./components/methods"));
-
 var _config = _interopRequireDefault(require("./config"));
-
-var _logger = _interopRequireDefault(require("./logger"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var optionsBuilder = require("./options-builder");
 
@@ -40,8 +34,7 @@ function () {
   function Servious(options) {
     var _this = this;
 
-    _classCallCheck(this, Servious);
-
+    (0, _classCallCheck2["default"])(this, Servious);
     // this.root = null; // Dispatch reference of the root server
     // this.caches = new Map();
     // this.methods = new Methods(this);
@@ -60,7 +53,7 @@ function () {
     _explorer["default"].setDefaults(options);
   }
 
-  _createClass(Servious, [{
+  (0, _createClass2["default"])(Servious, [{
     key: "registerResponder",
     value: function registerResponder(advertisement, options) {
       this.responder = new _responder["default"]({
@@ -92,10 +85,10 @@ function () {
   }, {
     key: "send",
     value: function () {
-      var _send = _asyncToGenerator(
+      var _send = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(service, operation, payload) {
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+      _regenerator["default"].mark(function _callee(service, operation, payload) {
+        return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
@@ -143,7 +136,7 @@ function () {
   }, {
     key: "addLink",
     value: function addLink(name, options) {
-      if (_typeof(name) !== "object") {
+      if ((0, _typeof2["default"])(name) !== "object") {
         return this._addLink(name, options);
       } // {} or [{}, {}]
 
@@ -193,7 +186,6 @@ function () {
       }, options));
     }
   }]);
-
   return Servious;
 }();
 
