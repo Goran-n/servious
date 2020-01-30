@@ -12,8 +12,11 @@ const sendRequest = async () => {
   const req = await service.send('queue-service', 'generate-number', { payload: {} });
 
   stats.meter('requestsPerSecond').mark();
-  console.log(`Received response ${req}`);
 };
+
+setInterval(() => {
+  console.log(stats.toJSON());
+}, 100);
 
 setInterval(sendRequest, 1);
 setInterval(sendRequest, 1);
