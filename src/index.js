@@ -1,9 +1,7 @@
 import Explorer from "./components/explorer";
 import Requester from "./components/requester";
 import Responder from "./components/responder";
-import Methods from "./components/methods";
 import Config from "./config";
-import logger from "./logger";
 
 const optionsBuilder = require("./options-builder");
 

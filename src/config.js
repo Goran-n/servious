@@ -1,5 +1,3 @@
-
-
 import Joi from '@hapi/joi';
 
 const internals = {};
