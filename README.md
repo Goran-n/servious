@@ -11,6 +11,10 @@ Servious is still in early beta. Help us out by reporting any bugs.
 Your first microservice in 30 seconds.
 ----
 
+Installation
+```
+npm install servious --save
+```
 
 Example requester.js
 ```js
