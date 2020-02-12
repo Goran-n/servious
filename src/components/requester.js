@@ -97,41 +97,13 @@ export default class Requester extends Monitorable(Configurable(Component)) {
         resolve(res);
       });
     });
-  }
-
+   }
   get type() {
     return 'req';
   }
+
+
   get oppo() {
     return 'rep';
   }
-}
-
-function sendOverSocket(sock, timeout, ...args) {
-  if (!timeout) {
-    return sock.send(...args);
-  }
-
-  const cb = args.pop();
-
-  const timeoutHandle = setTimeout(() => {
-    // Remove the request from the request queue so that it's not sent to responders (#183)
-    const req = sock.queue.findIndex((r) => r[ r.length - 1 ] == messageCallback);
-
-    if (req > -1) {
-      sock.queue.splice(req, 1);
-    }
-
-    // Remove the request callback
-    delete sock.callbacks[ messageCallback.id ];
-
-    cb(new Error('Request timed out.'));
-  }, timeout);
-
-  const messageCallback = (...args) => {
-    clearTimeout(timeoutHandle);
-    cb(...args);
-  };
-
-  sock.send(...args, messageCallback);
 }

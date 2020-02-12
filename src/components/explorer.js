@@ -1,4 +1,4 @@
-const Explore = require("@dashersw/node-discover");
+const Explore = require("node-discover");
 
 // eslint-disable-next-line
 const colors = require('colors');

@@ -1,14 +1,9 @@
-
-
 const Hoek = require('@hapi/hoek');
-
 const Config = require('../config');
-
 
 const internals = {
   methodNameRx: /^[_$a-zA-Z][$\w]*(?:\.[_$a-zA-Z][$\w]*)*$/
 };
-
 
 exports = module.exports = class {
 
