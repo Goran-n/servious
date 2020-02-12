@@ -66,13 +66,13 @@ export default class Requester extends Monitorable(Configurable(Component)) {
     sock.write(this.sock.pack(args));
   }
 
+
   onAdded(obj) {
-    super.onAdded(obj);
 
     const address = this.constructor.useHostNames ? obj.hostName : obj.address;
 
     const alreadyConnected = this.sock.socks.some((s) =>
-      (this.constructor.useHostNames ? s._host == obj.hostName : s.remoteAddress == address) && s.remotePort == obj.advertisement.port);
+      (this.constructor.useHostNames ? s._host === obj.hostName : s.remoteAddress === address) && s.remotePort === obj.advertisement.port);
 
     if (alreadyConnected) {
       return;
@@ -80,7 +80,18 @@ export default class Requester extends Monitorable(Configurable(Component)) {
 
     this.sock.connect(obj.advertisement.port, address);
   }
+  onRemoved(obj) {
+    const address = this.constructor.useHostNames ? obj.hostName : obj.address;
 
+    const alreadyConnected = this.sock.socks.some((s) =>
+      (this.constructor.useHostNames ? s._host === obj.hostName : s.remoteAddress === address) && s.remotePort === obj.advertisement.port);
+
+    if (alreadyConnected) {
+      return;
+    }
+
+    this.sock.connect(obj.advertisement.port, address);
+  }
   send(...args) {
     const hasCallback = typeof args[ args.length - 1 ] == 'function';
     const timeout = args[ 0 ].__timeout || this.timeout;
