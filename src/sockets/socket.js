@@ -118,12 +118,16 @@ export default class Socket extends Emitter{
       self.emit.apply(self, [ 'message' ].concat(msg.args));
     };
   }
-  connect (port, host, fn){
+  connect ( { advertisement, host }, fn ){
+
+    const { port } = advertisement
+
     let self = this;
 
-    if (this.type == 'server') {
+    if (this.type === 'server') {
       throw new Error('cannot connect() after bind()');
     }
+
     if (typeof host == 'function') {
       fn = host;
       host = undefined;
@@ -147,7 +151,10 @@ export default class Socket extends Emitter{
     let max = self.get('retry max timeout');
     let sock = new net.Socket();
 
-    sock.setNoDelay();
+
+    sock.advertisement = advertisement;
+
+      sock.setNoDelay();
     this.type = 'client';
 
     this.handleErrors(sock);

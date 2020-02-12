@@ -7,6 +7,7 @@ import ReqSocket from '../sockets/requester';
 const SUBSET_IDENTIFIER = '__subset';
 
 const sendOverSocket = (sock, timeout, ...args) => {
+
   if (!timeout) {
     return sock.sender(...args);
   }
@@ -109,7 +110,11 @@ export default class Requester extends Configurable(Component) {
       return;
     }
 
-    this.sock.connect(obj.advertisement.port, address);
+    this.sock.connect({
+      ...obj,
+      host: address
+    });
+
   }
   onRemoved(obj) {
     const address = this.constructor.useHostNames ? obj.hostName : obj.address;

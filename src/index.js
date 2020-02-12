@@ -56,8 +56,9 @@ const Servious = class {
       throw new Error(`Service ${service} is not defined`);
     }
 
-    // logger.info({ "service-rs": "public-api", "type": `${operation}`, "r": { ...payload }, "namespace": this.services[ service ].namespace });
-    return this.services[ service ].send({ "type": `${operation}`, "val": payload })
+    const { advertisement } = this.services[service]
+
+    return this.services[ service ].send({ "type": `${operation}`, service: advertisement.service, "val": payload })
       .then((res) => {
         return res;
       })
@@ -67,25 +68,14 @@ const Servious = class {
   }
   /**
    * Appends a requester to the service
-   * @param name
-   * @param options
    */
-  addLink(name, options){
-    if (typeof name !== "object") {
-      return this._addLink(name, options);
-    }
+  addLink({ name, service, options }){
 
-    // {} or [{}, {}]
+    const linkOptions = arguments ? arguments[0] : null;
+    const link = Config.apply("linkObject", linkOptions);
 
-    const items = [].concat(name);
+    this._addLink(link.name, link.service, link.options);
 
-    for (let item of items) {
-      item = Config.apply("linkObject", item);
-      this._addLink(item.name, {
-        "options": item.options,
-        "namespace": item.namespace
-      });
-    }
   }
 
   /**
@@ -94,9 +84,10 @@ const Servious = class {
    * @param options
    * @private
    */
-  _addLink(name, options){
+  _addLink(name, service, options){
     this.services[ name ] = new Requester({
       name,
+      service,
       ...options
     });
   }

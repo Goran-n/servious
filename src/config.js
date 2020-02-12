@@ -33,6 +33,6 @@ internals.methodObject = Joi.object({
 
 internals.linkObject = Joi.object({
   name: Joi.string().required(),
+  service: Joi.string().required(),
   options: Joi.object().optional()
-
 });

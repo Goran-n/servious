@@ -33,7 +33,7 @@ export default class ReqSocket extends Socket{
 
   }
   id (){
-    return this.identity + ':' + this.ids++;
+    return `${this.identity }:${ this.ids++}`;
   }
   onmessage (){
     let self = this;
@@ -51,12 +51,22 @@ export default class ReqSocket extends Socket{
     };
 
   }
+  selectSocket(targetService){
+    if (this.socks.length > 0){
+      const socks = this.socks.filter((item) => {
+        return !!(item && item.advertisement && item.advertisement.name === targetService);
+      });
+
+      debug(`Found ${socks.length} ${targetService} services`);
+      return socks[ this.n++ % socks.length ];
+    }
+    return false;
+  }
   sender (){
 
-    let socks = this.socks;
-    let len = socks.length;
-    let sock = socks[ this.n++ % len ];
     let args = slice(arguments);
+
+    const sock = this.selectSocket(args[ 0 ].service);
 
     if (sock) {
       let hasCallback = typeof args[ args.length - 1 ] == 'function';
