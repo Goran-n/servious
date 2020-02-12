@@ -1,11 +1,6 @@
-
-/**
- * Module dependencies.
- */
-
 let Emitter = require('events').EventEmitter;
 let Configurable = require('configurable');
-let debug = require('debug')('axon:sock');
+let debug = require('debug')('servious:sock');
 let Message = require('amp-message');
 let Parser = require('amp').Stream;
 let url = require('url');

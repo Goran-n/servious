@@ -45,9 +45,7 @@
     "portfinder": "^1.0.25",
     "punt": "^2.3.0",
     "socket.io": "^2.3.0",
-    "uuid": "^3.3.3",
-    "configurable": "latest",
-    "amp": "latest"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",

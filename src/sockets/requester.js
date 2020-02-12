@@ -1,10 +1,6 @@
-
-/**
- * Module dependencies.
- */
-
 let debug = require('debug')('servious:req');
 
+import _ from 'lodash';
 import queue from '../plugins/queue';
 import { slice } from '../utils';
 import Message from 'amp-message';
