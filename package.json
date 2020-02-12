@@ -1,6 +1,6 @@
 {
   "name": "servious",
-  "version": "1.0.3",
+  "version": "1.0.3-beta.2",
   "description": "zero configuration microservices for node.js",
   "author": "Nikic Company Ltd",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "start-dev": "nodemon --exec babel-node src/index.js",
     "start-requester": "nodemon --exec babel-node examples/requester.js",
     "start-responder": "nodemon --exec babel-node examples/responder.js",
+    "start-hapi": "nodemon --exec babel-node examples/hapi.js",
     "start-zprod": "nodemon --exec babel-node examples/z-prod.js",
     "start-zwork": "nodemon --exec babel-node examples/z-work.js",
     "clean": "rm -rf dist",
@@ -29,13 +30,26 @@
     "nodejs",
     "services"
   ],
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "DEBUG": "servious*"
+    }
+  },
   "dependencies": {
     "@dashersw/node-discover": "^1.0.4",
     "@hapi/boom": "latest",
+    "@hapi/hapi": "latest",
     "@hapi/hoek": "^8.3.2",
     "@hapi/joi": "latest",
+    "amp": "latest",
     "amp-message": "^0.1.2",
     "colors": "^1.4.0",
+    "configurable": "latest",
     "core-js": "^3.3.4",
     "debug": "^4.1.1",
     "eventemitter2": "^5.0.1",

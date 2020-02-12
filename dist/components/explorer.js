@@ -23,9 +23,9 @@ var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-var Explore = require("@dashersw/node-discover"); // eslint-disable-next-line
+var Explore = require("node-discover"); // eslint-disable-next-line
 
 
 var colors = require('colors');
@@ -35,7 +35,7 @@ var defaultOptions = {
   "checkInterval": 4000,
   "nodeTimeout": 5000,
   "masterTimeout": 6000,
-  "monitor": false,
+  "monitor": true,
   "log": true,
   "helloLogsEnabled": true,
   "statusLogsEnabled": true,
@@ -52,6 +52,11 @@ function (_Explore) {
 
     (0, _classCallCheck2["default"])(this, Explorer);
     options = _objectSpread({}, defaultOptions, {}, Explorer.defaults, {}, options);
+
+    if (advertisement.node_type === 'req') {
+      options.client = true;
+    }
+
     _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Explorer).call(this, options));
     _this.advertisement = _objectSpread({
       "type": "service"
@@ -66,20 +71,32 @@ function (_Explore) {
     }).join(" ");
     options.log && _this.log(_this.helloLogger());
 
+    _this.on("promotion", function () {
+      _this.log(["Process promoted to master node"]);
+    });
+
+    _this.on("demotion", function () {
+      _this.log(["Process demoted from master"]);
+    });
+
+    _this.on("master", function () {
+      _this.log(["Process allocated to master node"]);
+    });
+
     _this.on("added", function (obj) {
-      if (!options.monitor && obj.advertisement.key != _this.advertisement.key) {
+      if (!options.monitor && obj.advertisement.key !== _this.advertisement.key || obj.advertisement.namespace !== _this.advertisement.namespace) {
         return;
       }
 
-      options.log && options.statusLogsEnabled && options.helloLogsEnabled && _this.log(_this.statusLogger(obj, "online"));
+      _this.log && options.statusLogsEnabled && options.helloLogsEnabled && _this.log(_this.statusLogger(obj, "online"));
     });
 
     _this.on("removed", function (obj) {
-      if (!options.monitor && obj.advertisement.key != _this.advertisement.key) {
+      if (!options.monitor && obj.advertisement.key !== _this.advertisement.key || obj.advertisement.namespace !== _this.advertisement.namespace) {
         return;
       }
 
-      options.log && options.statusLogsEnabled && _this.log(_this.statusLogger(obj, "offline"));
+      _this.log && options.statusLogsEnabled && _this.log(_this.statusLogger(obj, "offline"));
     });
 
     return _this;
@@ -101,13 +118,11 @@ function (_Explore) {
       var logs = [];
 
       if (status) {
-        var statusLog = status == "online" ? ".online".green : ".offline".red;
-        logs.push(this.advertisement.name, ">", obj.advertisement.type.magenta + statusLog);
-      } else {
-        logs.push();
+        var statusLog = status === "online" ? ".online".green : ".offline".red;
+        logs.push([this.advertisement.namespace], [this.advertisement.name], "=>", obj.advertisement.type.magenta + statusLog + " --");
       }
 
-      logs.push("".concat(obj.advertisement.name.white).concat("#".grey).concat(obj.id.grey));
+      logs.push("[ ".concat(obj.advertisement.namespace, " ] - ").concat(obj.advertisement.name.white).concat("#".grey).concat(obj.id.grey));
 
       if (obj.advertisement.port) {
         logs.push("on", obj.advertisement.port.toString().blue);

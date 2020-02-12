@@ -18,7 +18,7 @@ var _explorer = _interopRequireDefault(require("./explorer"));
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var EventEmitter = require("eventemitter2").EventEmitter2;
 
@@ -43,8 +43,9 @@ function (_EventEmitter) {
 
     }));
     advertisement.key = "".concat(_this.constructor.environment, "$$").concat(advertisement.key || "");
+    _this.timeout = 30;
     _this.advertisement = advertisement;
-    _this.advertisement.axon_type = _this.type;
+    _this.advertisement.node_type = _this.type;
     _this.explorerOptions = _objectSpread({}, _explorer["default"].defaults, {}, explorerOptions);
     _this.explorerOptions.address = _this.explorerOptions.address || "0.0.0.0";
     return _this;
@@ -57,34 +58,26 @@ function (_EventEmitter) {
 
       this.explorer = new _explorer["default"](this.advertisement, this.explorerOptions);
       this.explorer.on("added", function (item) {
-        if (item.advertisement.axon_type != _this2.oppo || item.advertisement.key != _this2.advertisement.key || _this2.advertisement.namespace != item.advertisement.namespace) {
+        if (item.advertisement.node_type !== _this2.oppo || item.advertisement.key !== _this2.advertisement.key || _this2.advertisement.namespace !== item.advertisement.namespace) {
           return;
         }
 
-        _this2.onAdded(item);
+        if (_this2.onAdded) {
+          _this2.onAdded(item);
+        }
 
         _this2.emit("servious:added", item);
       });
       this.explorer.on("removed", function (item) {
-        if (item.advertisement.axon_type != _this2.oppo || item.advertisement.key != _this2.advertisement.key || _this2.advertisement.namespace != item.advertisement.namespace) {
-          return;
-        }
-
-        _this2.onRemoved(item);
+        if (item.advertisement.node_type !== _this2.oppo || item.advertisement.key !== _this2.advertisement.key || _this2.advertisement.namespace !== item.advertisement.namespace) return; // this.onRemoved(item);
 
         _this2.emit("servious:removed", item);
       });
     }
   }, {
-    key: "onAdded",
-    value: function onAdded() {}
-  }, {
-    key: "onRemoved",
-    value: function onRemoved() {}
-  }, {
     key: "close",
     value: function close() {
-      this.sock && this.sock.close();
+      this.sock && this.sock.destroy();
       this.explorer && this.explorer.stop();
     }
   }]);
