@@ -17,7 +17,12 @@ const defaultOptions = {
 
 export default class Explorer extends Explore {
   constructor(advertisement, options) {
+
     options = { ...defaultOptions, ...Explorer.defaults, ...options };
+
+    if(advertisement.node_type === 'req'){
+      options.client = true
+    }
 
     super(options);
 
