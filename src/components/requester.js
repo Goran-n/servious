@@ -1,18 +1,51 @@
-const axon = require('@dashersw/axon');
-const debug = require('debug')('axon:req');
+const debug = require('debug')('servious:req');
 const Configurable = require('./configurable');
-const Monitorable = require('./monitorable');
 const Component = require('./component');
+
+import ReqSocket from '../sockets/requester';
 
 const SUBSET_IDENTIFIER = '__subset';
 
-export default class Requester extends Monitorable(Configurable(Component)) {
+const sendOverSocket = (sock, timeout, ...args) => {
+  if (!timeout) {
+    return sock.sender(...args);
+  }
+
+  const cb = args.pop();
+
+  const timeoutHandle = setTimeout(() => {
+
+    const req = sock.queue.findIndex((r) => r[ r.length - 1 ] === messageCallback);
+
+    if (req > -1) {
+      sock.queue.splice(req, 1);
+    }
+
+    // Remove the request callback
+    delete sock.callbacks[ messageCallback.id ];
+
+    cb(new Error('Request timed out.'));
+
+  }, timeout);
+
+  const messageCallback = (...args) => {
+    clearTimeout(timeoutHandle);
+    cb(...args);
+  };
+
+  sock.sender(...args, messageCallback);
+};
+
+export default class Requester extends Configurable(Component) {
   constructor(advertisement, explorerOptions) {
+
+
     super(advertisement, explorerOptions);
 
-    this.sock = new axon.types[ this.type ]();
+    this.sock = new ReqSocket();
+
     this.sock.set('retry timeout', 0);
-    this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT;
+    this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || 12000;
 
     this.sock.send = this.socketSend.bind(this);
     this.startExplorer();
@@ -21,17 +54,15 @@ export default class Requester extends Monitorable(Configurable(Component)) {
   filterSubsetInSocks(subset, socks) {
     // Find correct nodes
     const possibleNodes = Object.values(this.explorer.nodes).filter((node) => {
-      return node.advertisement.subset == subset;
+      return node.advertisement.subset === subset;
     });
 
     // Find corresponding sockets
-    const possibleSocks = possibleNodes.map((node) => {
+    return possibleNodes.map((node) => {
       return socks.find((sock) => {
-        return sock.remoteAddress == node.address && sock.remotePort == node.advertisement.port;
+        return sock.remoteAddress === node.address && sock.remotePort === node.advertisement.port;
       });
     }).filter((sock) => sock);
-
-    return possibleSocks;
   }
   socketSend(...args) {
     const { socks } = this.sock;
