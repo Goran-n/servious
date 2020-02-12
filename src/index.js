@@ -1,4 +1,3 @@
-import Explorer from "./components/explorer";
 import Requester from "./components/requester";
 import Responder from "./components/responder";
 import Config from "./config";
@@ -7,27 +6,26 @@ const optionsBuilder = require("./options-builder");
 
 const Servious = class {
   constructor(options) {
-    // this.root = null; // Dispatch reference of the root server
-    // this.caches = new Map();
-    // this.methods = new Methods(this);
+
+    options = optionsBuilder(options);
+
     this.services = {}; // Track service registrations
     this.options = optionsBuilder(options);
     this.responder = null;
 
     // Servious components
-    const components = [
+    this.components = [
       Requester,
       Responder
     ];
 
     // // Pre configure each component
-    components.forEach((component) => {
-      component.setEnvironment(this.options.environment);
-      component.setUseHostNames && component.setUseHostNames(this.options.useHostNames);
+    this.components.forEach((component) => {
+      component.setEnvironment(options.environment);
+      component.setUseHostNames &&
+      component.setUseHostNames(options.useHostNames);
     });
 
-    // Set default explorer conditions
-    Explorer.setDefaults(options);
   }
   registerResponder(advertisement, options){
     this.responder = new Responder({
@@ -53,8 +51,9 @@ const Servious = class {
    * @returns Promise
    */
   async send(service, operation, payload){
+
     if (!this.services[ service ]){
-      return throw new Error(`Service ${service} is not defined`);
+      throw new Error(`Service ${service} is not defined`);
     }
 
     // logger.info({ "service-rs": "public-api", "type": `${operation}`, "r": { ...payload }, "namespace": this.services[ service ].namespace });
@@ -62,7 +61,9 @@ const Servious = class {
       .then((res) => {
         return res;
       })
-      .catch((e) => throw e);
+      .catch((e) => {
+        throw e;
+      });
   }
   /**
    * Appends a requester to the service
