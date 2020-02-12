@@ -8,7 +8,7 @@ const defaultOptions = {
   "checkInterval": 4000,
   "nodeTimeout": 5000,
   "masterTimeout": 6000,
-  "monitor": false,
+  "monitor": true,
   "log": true,
   "helloLogsEnabled": true,
   "statusLogsEnabled": true,
