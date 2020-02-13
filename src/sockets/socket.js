@@ -113,9 +113,7 @@ export default class Socket extends Emitter{
       self.emit.apply(self, [ 'message' ].concat(msg.args));
     };
   }
-  connect ( { advertisement, host }, fn ){
-
-    const { port } = advertisement
+  connect ( { advertisement, port, host }, fn ){
 
     let self = this;
 
@@ -163,13 +161,15 @@ export default class Socket extends Emitter{
       }
       let retry = self.retry || self.get('retry timeout');
 
-      setTimeout(() => {
-        debug('%s attempting reconnect', self.type);
-        self.emit('reconnect attempt');
-        sock.destroy();
-        self.connect(port, host);
-        self.retry = Math.round(Math.min(max, retry * 1.5));
-      }, retry);
+      sock.destroy();
+
+      // setTimeout(() => {
+      //   debug('%s attempting reconnect', self.type);
+      //   self.emit('reconnect attempt');
+      //   self.connect({ port, host });
+      //   self.retry = Math.round(Math.min(max, retry * 1.5)) || 2;
+      // }, retry);
+
     });
 
     sock.on('connect', () => {

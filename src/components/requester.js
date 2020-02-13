@@ -110,23 +110,16 @@ export default class Requester extends Configurable(Component) {
       return;
     }
 
+
     this.sock.connect({
-      ...obj,
+      advertisement: obj.advertisement,
+      port: obj.advertisement.port,
       host: address
     });
 
   }
   onRemoved(obj) {
-    const address = this.constructor.useHostNames ? obj.hostName : obj.address;
 
-    const alreadyConnected = this.sock.socks.some((s) =>
-      (this.constructor.useHostNames ? s._host === obj.hostName : s.remoteAddress === address) && s.remotePort === obj.advertisement.port);
-
-    if (alreadyConnected) {
-      return;
-    }
-
-    this.sock.connect(obj.advertisement.port, address);
   }
   send(...args) {
     const hasCallback = typeof args[ args.length - 1 ] == 'function';
