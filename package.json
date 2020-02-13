@@ -1,6 +1,6 @@
 {
   "name": "servious",
-  "version": "1.0.3-beta.2",
+  "version": "1.0.3-beta.3",
   "description": "zero configuration microservices for node.js",
   "author": "Nikic Company Ltd",
   "license": "ISC",
