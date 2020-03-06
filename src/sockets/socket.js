@@ -129,7 +129,7 @@ export default class Socket extends Emitter{
     if (typeof port == 'string') {
       port = url.parse(port);
 
-      if (port.protocol == 'unix:') {
+      if (port.protocol === 'unix:') {
         host = fn;
         fn = undefined;
         port = port.pathname;
@@ -147,7 +147,8 @@ export default class Socket extends Emitter{
 
     sock.advertisement = advertisement;
 
-      sock.setNoDelay();
+    sock.setNoDelay();
+
     this.type = 'client';
 
     this.handleErrors(sock);
@@ -193,7 +194,6 @@ export default class Socket extends Emitter{
    * @param {Socket} sock
    * @api private
    */
-
   onconnect (sock){
     let self = this;
     let addr = `${sock.remoteAddress }:${ sock.remotePort}`;
@@ -212,7 +212,7 @@ export default class Socket extends Emitter{
   bind (port, host, fn){
     let self = this;
 
-    if (this.type == 'client') {
+    if (this.type === 'client') {
       throw new Error('cannot bind() after connect()');
     }
     if (typeof host == 'function') {
@@ -225,7 +225,7 @@ export default class Socket extends Emitter{
     if (typeof port == 'string') {
       port = url.parse(port);
 
-      if (port.protocol == 'unix:') {
+      if (port.protocol === 'unix:') {
         host = fn;
         fn = undefined;
         port = port.pathname;
@@ -248,7 +248,7 @@ export default class Socket extends Emitter{
     if (unixSocket) {
       // TODO: move out
       this.server.on('error', (e) => {
-        if (e.code == 'EADDRINUSE') {
+        if (e.code === 'EADDRINUSE') {
           // Unix file socket and error EADDRINUSE is the case if
           // the file socket exists. We check if other processes
           // listen on file socket, otherwise it is a stale socket
@@ -257,7 +257,7 @@ export default class Socket extends Emitter{
           let clientSocket = new net.Socket();
 
           clientSocket.on('error', (e2) => {
-            if (e2.code == 'ECONNREFUSED') {
+            if (e2.code === 'ECONNREFUSED') {
               // No other server listening, so we can delete stale
               // socket file and reopen server socket
               fs.unlink(port);

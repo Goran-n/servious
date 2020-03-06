@@ -39,8 +39,6 @@ const sendOverSocket = (sock, timeout, ...args) => {
 
 export default class Requester extends Configurable(Component) {
   constructor(advertisement, explorerOptions) {
-
-
     super(advertisement, explorerOptions);
 
     this.sock = new ReqSocket();
@@ -98,7 +96,6 @@ export default class Requester extends Configurable(Component) {
     sock.write(this.sock.pack(args));
   }
 
-
   onAdded(obj) {
 
     const address = this.constructor.useHostNames ? obj.hostName : obj.address;
@@ -110,11 +107,10 @@ export default class Requester extends Configurable(Component) {
       return;
     }
 
-
     this.sock.connect({
       advertisement: obj.advertisement,
       port: obj.advertisement.port,
-      host: address
+      host: address,
     });
 
   }
