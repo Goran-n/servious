@@ -69,7 +69,9 @@ function (_EventEmitter) {
         _this2.emit("servious:added", item);
       });
       this.explorer.on("removed", function (item) {
-        if (item.advertisement.node_type !== _this2.oppo || item.advertisement.key !== _this2.advertisement.key || _this2.advertisement.namespace !== item.advertisement.namespace) return; // this.onRemoved(item);
+        if (item.advertisement.node_type !== _this2.oppo || item.advertisement.key !== _this2.advertisement.key || _this2.advertisement.namespace !== item.advertisement.namespace) return;
+
+        _this2.onRemoved(item);
 
         _this2.emit("servious:removed", item);
       });
@@ -77,7 +79,7 @@ function (_EventEmitter) {
   }, {
     key: "close",
     value: function close() {
-      this.sock && this.sock.destroy();
+      this.sock && this.sock.close();
       this.explorer && this.explorer.stop();
     }
   }]);

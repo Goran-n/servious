@@ -25,7 +25,7 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-var Explore = require("node-discover"); // eslint-disable-next-line
+var Explore = require("@nikic/node-discover"); // eslint-disable-next-line
 
 
 var colors = require('colors');
@@ -57,6 +57,7 @@ function (_Explore) {
       options.client = true;
     }
 
+    options.exclusive = true;
     _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Explorer).call(this, options));
     _this.advertisement = _objectSpread({
       "type": "service"

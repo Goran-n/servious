@@ -7,8 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
@@ -22,10 +20,6 @@ var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/hel
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
 var _requester = _interopRequireDefault(require("../sockets/requester"));
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var debug = require('debug')('servious:req');
 
@@ -151,30 +145,19 @@ function (_Configurable) {
         return;
       }
 
-      this.sock.connect(_objectSpread({}, obj, {
+      this.sock.connect({
+        advertisement: obj.advertisement,
+        port: obj.advertisement.port,
         host: address
-      }));
+      });
     }
   }, {
     key: "onRemoved",
-    value: function onRemoved(obj) {
-      var _this3 = this;
-
-      var address = this.constructor.useHostNames ? obj.hostName : obj.address;
-      var alreadyConnected = this.sock.socks.some(function (s) {
-        return (_this3.constructor.useHostNames ? s._host === obj.hostName : s.remoteAddress === address) && s.remotePort === obj.advertisement.port;
-      });
-
-      if (alreadyConnected) {
-        return;
-      }
-
-      this.sock.connect(obj.advertisement.port, address);
-    }
+    value: function onRemoved(obj) {}
   }, {
     key: "send",
     value: function send() {
-      var _this4 = this;
+      var _this3 = this;
 
       for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         args[_key3] = arguments[_key3];
@@ -188,7 +171,7 @@ function (_Configurable) {
       }
 
       return new Promise(function (resolve, reject) {
-        sendOverSocket.apply(void 0, [_this4.sock, timeout].concat(args, [function (err, res) {
+        sendOverSocket.apply(void 0, [_this3.sock, timeout].concat(args, [function (err, res) {
           if (err) {
             return reject(err);
           }

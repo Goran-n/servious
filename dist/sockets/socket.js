@@ -7,8 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _readOnlyError2 = _interopRequireDefault(require("@babel/runtime/helpers/readOnlyError"));
-
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
@@ -162,8 +160,8 @@ function (_Emitter) {
     key: "connect",
     value: function connect(_ref, fn) {
       var advertisement = _ref.advertisement,
+          port = _ref.port,
           host = _ref.host;
-      var port = advertisement.port;
       var self = this;
 
       if (this.type === 'server') {
@@ -176,15 +174,15 @@ function (_Emitter) {
       }
 
       if (typeof port == 'string') {
-        port = ((0, _readOnlyError2["default"])("port"), url.parse(port));
+        port = url.parse(port);
 
-        if (port.protocol == 'unix:') {
+        if (port.protocol === 'unix:') {
           host = fn;
           fn = undefined;
-          port = ((0, _readOnlyError2["default"])("port"), port.pathname);
+          port = port.pathname;
         } else {
           host = port.hostname || '0.0.0.0';
-          port = ((0, _readOnlyError2["default"])("port"), parseInt(port.port, 10));
+          port = parseInt(port.port, 10);
         }
       } else {
         host = host || '0.0.0.0';
@@ -206,13 +204,12 @@ function (_Emitter) {
         }
 
         var retry = self.retry || self.get('retry timeout');
-        setTimeout(function () {
-          debug('%s attempting reconnect', self.type);
-          self.emit('reconnect attempt');
-          sock.destroy();
-          self.connect(port, host);
-          self.retry = Math.round(Math.min(max, retry * 1.5));
-        }, retry);
+        sock.destroy(); // setTimeout(() => {
+        //   debug('%s attempting reconnect', self.type);
+        //   self.emit('reconnect attempt');
+        //   self.connect({ port, host });
+        //   self.retry = Math.round(Math.min(max, retry * 1.5)) || 2;
+        // }, retry);
       });
       sock.on('connect', function () {
         debug('%s connect', self.type);
@@ -253,7 +250,7 @@ function (_Emitter) {
     value: function bind(port, host, fn) {
       var self = this;
 
-      if (this.type == 'client') {
+      if (this.type === 'client') {
         throw new Error('cannot bind() after connect()');
       }
 
@@ -267,7 +264,7 @@ function (_Emitter) {
       if (typeof port == 'string') {
         port = url.parse(port);
 
-        if (port.protocol == 'unix:') {
+        if (port.protocol === 'unix:') {
           host = fn;
           fn = undefined;
           port = port.pathname;
@@ -288,7 +285,7 @@ function (_Emitter) {
       if (unixSocket) {
         // TODO: move out
         this.server.on('error', function (e) {
-          if (e.code == 'EADDRINUSE') {
+          if (e.code === 'EADDRINUSE') {
             // Unix file socket and error EADDRINUSE is the case if
             // the file socket exists. We check if other processes
             // listen on file socket, otherwise it is a stale socket
@@ -296,7 +293,7 @@ function (_Emitter) {
             // We try to connect to socket via plain network socket
             var clientSocket = new net.Socket();
             clientSocket.on('error', function (e2) {
-              if (e2.code == 'ECONNREFUSED') {
+              if (e2.code === 'ECONNREFUSED') {
                 // No other server listening, so we can delete stale
                 // socket file and reopen server socket
                 fs.unlink(port);

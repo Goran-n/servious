@@ -17,8 +17,6 @@ var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/ge
 
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-var _lodash = _interopRequireDefault(require("lodash"));
-
 var _queue = _interopRequireDefault(require("../plugins/queue"));
 
 var _utils = require("../utils");
@@ -112,9 +110,6 @@ function (_Socket) {
         fn.id = this.id();
         this.callbacks[fn.id] = fn;
         args.push(fn.id);
-      }
-
-      if (sock) {
         sock.write(this.pack(args));
       } else {
         debug('no connected peers');
