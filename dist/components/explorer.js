@@ -57,7 +57,6 @@ function (_Explore) {
       options.client = true;
     }
 
-    options.exclusive = true;
     _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Explorer).call(this, options));
     _this.advertisement = _objectSpread({
       "type": "service"
