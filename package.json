@@ -12,17 +12,7 @@
   "scripts": {
     "build": "babel src -D --watch -d dist",
     "start-dev": "nodemon --exec babel-node src/index.js",
-    "start-requester": "nodemon --exec babel-node examples/requester.js",
-    "start-responder": "nodemon --exec babel-node examples/responder.js",
-    "start-hapi": "nodemon --exec babel-node examples/hapi.js",
-    "start-zprod": "nodemon --exec babel-node examples/z-prod.js",
-    "start-zwork": "nodemon --exec babel-node examples/z-work.js",
-    "clean": "rm -rf dist",
-    "coverage": "nyc -x=\"**/examples/*\" -x=\"**/*balanced*.js\" -x=\"**/test/*.js\" -x=\"**/lib/*.js\" report",
-    "lint": "eslint src test",
-    "lint-fix": "eslint --fix src test",
-    "publish": "npm run build",
-    "test": "NODE_ENV=dev nyc -x=\"**/examples/*\" -x=\"**/*balanced*.js\" -x=\"**/test/*.js\" -x=\"**/lib/*.js\" ava --timeout=60000"
+    "publish": "npm run build"
   },
   "keywords": [
     "servious",
@@ -35,31 +25,25 @@
     "ignore": [
       "node_modules/**/node_modules"
     ],
-    "delay": "2500",
+    "delay": 2500,
     "env": {
-      "DEBUG": "servious*"
+      "DEBUG": "servious:req"
     }
   },
   "dependencies": {
-    "@dashersw/node-discover": "^1.0.4",
-    "@hapi/boom": "latest",
-    "@hapi/hapi": "latest",
-    "@hapi/hoek": "^8.3.2",
+    "@hapi/hoek": "^9.0.3",
     "@hapi/joi": "latest",
     "amp": "latest",
     "amp-message": "^0.1.2",
     "colors": "^1.4.0",
     "configurable": "latest",
-    "core-js": "^3.3.4",
     "debug": "^4.1.1",
-    "eventemitter2": "^5.0.1",
+    "eventemitter2": "^6.0.0",
     "lodash": "^4.17.15",
-    "measured-core": "^1.51.1",
-    "node-discover": "^1.0.0",
+    "@nikic/node-discover": "^1.1.6",
     "portfinder": "^1.0.25",
-    "punt": "^2.3.0",
     "socket.io": "^2.3.0",
-    "uuid": "^3.3.3"
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
@@ -71,22 +55,10 @@
     "@babel/preset-env": "^7.6.3",
     "@babel/register": "latest",
     "@babel/runtime": "^7.6.3",
-    "async": "^3.1.0",
     "babel-eslint": "^10.0.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-preset-latest-node": "^3.2.1",
-    "commander": "^3.0.2",
-    "coveralls": "^3.0.7",
-    "cross-env": "^6.0.3",
-    "dotenv": "^8.2.0",
     "eslint": "^6.6.0",
-    "humanize-number": "^0.0.2",
-    "nodemon": "^2.0.2",
-    "nyc": "^15.0.0",
-    "pm2": "^4.2.1",
-    "randomstring": "^1.1.5",
-    "request": "^2.88.0",
-    "sinon": "^8.1.1",
-    "socket.io-client": "^2.3.0"
+    "nodemon": "^2.0.2"
   }
 }
