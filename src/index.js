@@ -4,29 +4,18 @@ import Config from "./config";
 
 const optionsBuilder = require("./options-builder");
 
-const Servious = class {
-  constructor(options) {
-
-    options = optionsBuilder(options);
-
-    this.services = {}; // Track service registrations
-    this.options = optionsBuilder(options);
-    this.responder = null;
-
-    // Servious components
-    this.components = [
-      Requester,
-      Responder
-    ];
-
-    // // Pre configure each component
-    this.components.forEach((component) => {
-      component.setEnvironment(options.environment);
-      component.setUseHostNames &&
-      component.setUseHostNames(options.useHostNames);
-    });
-
-  }
+const Servious = {
+  services: {},
+  options: optionsBuilder({}),
+  responder: null,
+  // Servious components
+  components: [
+    Requester,
+    Responder
+  ],
+  configure(options = {}){
+    this.options = optionsBuilder(options)
+  },
   registerResponder(advertisement, options){
     this.responder = new Responder({
       "name": advertisement.name,
@@ -34,7 +23,7 @@ const Servious = class {
       "respondsTo": advertisement.respondsTo,
       "options": options
     });
-  }
+  },
   /**
    * Responder responder definitions
    * @param operation
@@ -42,7 +31,7 @@ const Servious = class {
    */
   on(operation, logic){
     this.responder.on(operation, logic);
-  }
+  },
   /**
    * Sends a request to a pre defined responder link
    * @param service
@@ -56,7 +45,7 @@ const Servious = class {
       throw new Error(`Service ${service} is not defined`);
     }
 
-    const { advertisement } = this.services[service]
+    const { advertisement } = this.services[service];
 
     return this.services[ service ].send({ "type": `${operation}`, service: advertisement.service, "val": payload })
       .then((res) => {
@@ -65,7 +54,7 @@ const Servious = class {
       .catch((e) => {
         throw e;
       });
-  }
+  },
   /**
    * Appends a requester to the service
    */
@@ -76,11 +65,12 @@ const Servious = class {
 
     this._addLink(link.name, link.service, link.options);
 
-  }
+  },
 
   /**
    * Appends the internally validated link
    * @param name
+   * @param service
    * @param options
    * @private
    */
@@ -89,8 +79,17 @@ const Servious = class {
       name,
       service,
       ...options
-    });
+    }, this.options);
+  },
+  listServices(){
+    return this.services;
   }
 };
+
+Servious.components.forEach((component) => {
+  component.setEnvironment(Servious.options.environment);
+  component.setUseHostNames &&
+  component.setUseHostNames(Servious.options.useHostNames);
+});
 
 module.exports = Servious;
