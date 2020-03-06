@@ -1,4 +1,4 @@
-const Explore = require("node-discover");
+const Explore = require("@nikic/node-discover");
 
 // eslint-disable-next-line
 const colors = require('colors');
