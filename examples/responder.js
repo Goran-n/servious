@@ -1,14 +1,14 @@
-const Servious = require('../dist/index'); // "servious" in production"
-const service = new Servious();
+const servious = require('../dist/index'); // "servious" in production"
+
+servious.configure();
 
 // Register this service as a responder
-service.registerResponder({
-  name: 'queue-service',
-  namespace: 'local',
-  respondsTo: [ 'generate-number' ]
+servious.registerResponder({
+  name: 'my-service', // The name of your service
+  namespace: 'custom-namespace' // Optional namespace
 });
 
-service.on('generate-number', async (req) => {
+servious.on('generate-number', async (req) => {
   console.log(`Received request ${JSON.stringify(req)}`);
   return Math.random();
 });

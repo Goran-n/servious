@@ -1,5 +1,3 @@
-
-
 module.exports = (Base) => class Configurable extends Base {
   static get environment() {
     return this.constructor._environment || '';

@@ -1,13 +1,16 @@
-const axon = require('@dashersw/axon');
+import RepSocket from '../sockets/responder';
 const portfinder = require('portfinder');
 const Configurable = require('./configurable');
 const Component = require('./component');
 
+
 export default class Responder extends Configurable(Component) {
+
   constructor(advertisement, explorerOptions) {
     super(advertisement, explorerOptions);
 
-    this.sock = new axon.types[ this.type ]();
+    this.sock = new RepSocket();
+
     this.sock.on('bind', () => this.startExplorer());
 
     this.sock.on('message', (req, cb) => {
@@ -16,7 +19,7 @@ export default class Responder extends Configurable(Component) {
       }
 
       if (this.listeners(req.type).length === 0 && this.explorerOptions.logUnknownEvents) {
-        this.explorer.log([ this.advertisement.name, '>', `No listeners found for event: ${req.type}`.yellow ]);
+        this.log([ this.advertisement.name, '>', `No listeners found for event: ${req.type}`.yellow ]);
       }
 
       this.emit(req.type, req, cb);
@@ -27,7 +30,7 @@ export default class Responder extends Configurable(Component) {
 
       this.sock.bind(port);
       this.sock.server.on('error', (err) => {
-        if (err.code != 'EADDRINUSE') {
+        if (err.code !== 'EADDRINUSE') {
           throw err;
         }
 
@@ -42,6 +45,7 @@ export default class Responder extends Configurable(Component) {
       host: this.explorerOptions.address,
       port: advertisement.port
     }, onPort);
+
   }
 
   on(type, listener) {

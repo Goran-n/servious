@@ -37,5 +37,6 @@ internals.methodObject = _joi["default"].object({
 });
 internals.linkObject = _joi["default"].object({
   name: _joi["default"].string().required(),
+  service: _joi["default"].string().required(),
   options: _joi["default"].object().optional()
 });

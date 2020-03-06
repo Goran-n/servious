@@ -1,22 +1,27 @@
-const Servious = require('../dist/index.js'); // "servious" in production"
-const service = new Servious();
+const servious = require('../dist/index.js'); // "servious" in production"
 
-let stats = require('measured-core').createCollection();
+servious.configure();
 
-service.addLink('queue-service', {
-  namespace: 'local',
-  requests: [ 'generate-number' ]
+servious.addLink({
+  name: 'my-service',
+  service: 'my-service', // The service you wish to target with this link
+  options: {
+    namespace: 'custom-namespace', // Optional namespace
+  }
 });
 
 const sendRequest = async () => {
-  const req = await service.send('queue-service', 'generate-number', { payload: {} });
 
-  stats.meter('requestsPerSecond').mark();
+  console.log('Sending Request')
+
+  const req = await servious.send('my-service', 'generate-number', { payload: { 1: Math.round(Math.random(), 2) } })
+    .catch((err) => {
+    console.log(err);
+  });
+
+  console.log(req);
+
+  sendRequest();
 };
 
-setInterval(() => {
-  console.log(stats.toJSON());
-}, 100);
-
-setInterval(sendRequest, 1);
-setInterval(sendRequest, 1);
+sendRequest();

@@ -13,41 +13,69 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 
 var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
 
-var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
-
 var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
 
-var _get2 = _interopRequireDefault(require("@babel/runtime/helpers/get"));
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-var axon = require('@dashersw/axon');
+var _requester = _interopRequireDefault(require("../sockets/requester"));
 
-var debug = require('debug')('axon:req');
+var debug = require('debug')('servious:req');
 
 var Configurable = require('./configurable');
-
-var Monitorable = require('./monitorable');
 
 var Component = require('./component');
 
 var SUBSET_IDENTIFIER = '__subset';
 
+var sendOverSocket = function sendOverSocket(sock, timeout) {
+  for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  if (!timeout) {
+    return sock.sender.apply(sock, args);
+  }
+
+  var cb = args.pop();
+  var timeoutHandle = setTimeout(function () {
+    var req = sock.queue.findIndex(function (r) {
+      return r[r.length - 1] === messageCallback;
+    });
+
+    if (req > -1) {
+      sock.queue.splice(req, 1);
+    } // Remove the request callback
+
+
+    delete sock.callbacks[messageCallback.id];
+    cb(new Error('Request timed out.'));
+  }, timeout);
+
+  var messageCallback = function messageCallback() {
+    clearTimeout(timeoutHandle);
+    cb.apply(void 0, arguments);
+  };
+
+  sock.sender.apply(sock, args.concat([messageCallback]));
+};
+
 var Requester =
 /*#__PURE__*/
-function (_Monitorable) {
-  (0, _inherits2["default"])(Requester, _Monitorable);
+function (_Configurable) {
+  (0, _inherits2["default"])(Requester, _Configurable);
 
   function Requester(advertisement, explorerOptions) {
     var _this;
 
     (0, _classCallCheck2["default"])(this, Requester);
     _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Requester).call(this, advertisement, explorerOptions));
-    _this.sock = new axon.types[_this.type]();
+    _this.sock = new _requester["default"]();
 
     _this.sock.set('retry timeout', 0);
 
-    _this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT;
+    _this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || 12000;
     _this.sock.send = _this.socketSend.bind((0, _assertThisInitialized2["default"])(_this));
 
     _this.startExplorer();
@@ -60,25 +88,24 @@ function (_Monitorable) {
     value: function filterSubsetInSocks(subset, socks) {
       // Find correct nodes
       var possibleNodes = Object.values(this.explorer.nodes).filter(function (node) {
-        return node.advertisement.subset == subset;
+        return node.advertisement.subset === subset;
       }); // Find corresponding sockets
 
-      var possibleSocks = possibleNodes.map(function (node) {
+      return possibleNodes.map(function (node) {
         return socks.find(function (sock) {
-          return sock.remoteAddress == node.address && sock.remotePort == node.advertisement.port;
+          return sock.remoteAddress === node.address && sock.remotePort === node.advertisement.port;
         });
       }).filter(function (sock) {
         return sock;
       });
-      return possibleSocks;
     }
   }, {
     key: "socketSend",
     value: function socketSend() {
       var socks = this.sock.socks; // Enqueue if no socks connected yet
 
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
       }
 
       if (!socks || !socks.length) {
@@ -109,25 +136,31 @@ function (_Monitorable) {
     value: function onAdded(obj) {
       var _this2 = this;
 
-      (0, _get2["default"])((0, _getPrototypeOf2["default"])(Requester.prototype), "onAdded", this).call(this, obj);
       var address = this.constructor.useHostNames ? obj.hostName : obj.address;
       var alreadyConnected = this.sock.socks.some(function (s) {
-        return (_this2.constructor.useHostNames ? s._host == obj.hostName : s.remoteAddress == address) && s.remotePort == obj.advertisement.port;
+        return (_this2.constructor.useHostNames ? s._host === obj.hostName : s.remoteAddress === address) && s.remotePort === obj.advertisement.port;
       });
 
       if (alreadyConnected) {
         return;
       }
 
-      this.sock.connect(obj.advertisement.port, address);
+      this.sock.connect({
+        advertisement: obj.advertisement,
+        port: obj.advertisement.port,
+        host: address
+      });
     }
+  }, {
+    key: "onRemoved",
+    value: function onRemoved(obj) {}
   }, {
     key: "send",
     value: function send() {
       var _this3 = this;
 
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
       }
 
       var hasCallback = typeof args[args.length - 1] == 'function';
@@ -159,39 +192,6 @@ function (_Monitorable) {
     }
   }]);
   return Requester;
-}(Monitorable(Configurable(Component)));
+}(Configurable(Component));
 
 exports["default"] = Requester;
-
-function sendOverSocket(sock, timeout) {
-  for (var _len3 = arguments.length, args = new Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-    args[_key3 - 2] = arguments[_key3];
-  }
-
-  if (!timeout) {
-    return sock.send.apply(sock, args);
-  }
-
-  var cb = args.pop();
-  var timeoutHandle = setTimeout(function () {
-    // Remove the request from the request queue so that it's not sent to responders (#183)
-    var req = sock.queue.findIndex(function (r) {
-      return r[r.length - 1] == messageCallback;
-    });
-
-    if (req > -1) {
-      sock.queue.splice(req, 1);
-    } // Remove the request callback
-
-
-    delete sock.callbacks[messageCallback.id];
-    cb(new Error('Request timed out.'));
-  }, timeout);
-
-  var messageCallback = function messageCallback() {
-    clearTimeout(timeoutHandle);
-    cb.apply(void 0, arguments);
-  };
-
-  sock.send.apply(sock, args.concat([messageCallback]));
-}

@@ -1,34 +1,21 @@
-import Explorer from "./components/explorer";
 import Requester from "./components/requester";
 import Responder from "./components/responder";
 import Config from "./config";
 
 const optionsBuilder = require("./options-builder");
 
-const Servious = class {
-  constructor(options) {
-    // this.root = null; // Dispatch reference of the root server
-    // this.caches = new Map();
-    // this.methods = new Methods(this);
-    this.services = {}; // Track service registrations
-    this.options = optionsBuilder(options);
-    this.responder = null;
-
-    // Servious components
-    const components = [
-      Requester,
-      Responder
-    ];
-
-    // // Pre configure each component
-    components.forEach((component) => {
-      component.setEnvironment(this.options.environment);
-      component.setUseHostNames && component.setUseHostNames(this.options.useHostNames);
-    });
-
-    // Set default explorer conditions
-    Explorer.setDefaults(options);
-  }
+const Servious = {
+  services: {},
+  options: optionsBuilder({}),
+  responder: null,
+  // Servious components
+  components: [
+    Requester,
+    Responder
+  ],
+  configure(options = {}){
+    this.options = optionsBuilder(options)
+  },
   registerResponder(advertisement, options){
     this.responder = new Responder({
       "name": advertisement.name,
@@ -36,7 +23,7 @@ const Servious = class {
       "respondsTo": advertisement.respondsTo,
       "options": options
     });
-  }
+  },
   /**
    * Responder responder definitions
    * @param operation
@@ -44,7 +31,7 @@ const Servious = class {
    */
   on(operation, logic){
     this.responder.on(operation, logic);
-  }
+  },
   /**
    * Sends a request to a pre defined responder link
    * @param service
@@ -53,52 +40,56 @@ const Servious = class {
    * @returns Promise
    */
   async send(service, operation, payload){
+
     if (!this.services[ service ]){
-      return throw new Error(`Service ${service} is not defined`);
+      throw new Error(`Service ${service} is not defined`);
     }
 
-    // logger.info({ "service-rs": "public-api", "type": `${operation}`, "r": { ...payload }, "namespace": this.services[ service ].namespace });
-    return this.services[ service ].send({ "type": `${operation}`, "val": payload })
+    const { advertisement } = this.services[service];
+
+    return this.services[ service ].send({ "type": `${operation}`, service: advertisement.service, "val": payload })
       .then((res) => {
         return res;
       })
-      .catch((e) => throw e);
-  }
+      .catch((e) => {
+        throw e;
+      });
+  },
   /**
    * Appends a requester to the service
-   * @param name
-   * @param options
    */
-  addLink(name, options){
-    if (typeof name !== "object") {
-      return this._addLink(name, options);
-    }
+  addLink({ name, service, options }){
 
-    // {} or [{}, {}]
+    const linkOptions = arguments ? arguments[0] : null;
+    const link = Config.apply("linkObject", linkOptions);
 
-    const items = [].concat(name);
+    this._addLink(link.name, link.service, link.options);
 
-    for (let item of items) {
-      item = Config.apply("linkObject", item);
-      this._addLink(item.name, {
-        "options": item.options,
-        "namespace": item.namespace
-      });
-    }
-  }
+  },
 
   /**
    * Appends the internally validated link
    * @param name
+   * @param service
    * @param options
    * @private
    */
-  _addLink(name, options){
+  _addLink(name, service, options){
     this.services[ name ] = new Requester({
       name,
+      service,
       ...options
-    });
+    }, this.options);
+  },
+  listServices(){
+    return this.services;
   }
 };
+
+Servious.components.forEach((component) => {
+  component.setEnvironment(Servious.options.environment);
+  component.setUseHostNames &&
+  component.setUseHostNames(Servious.options.useHostNames);
+});
 
 module.exports = Servious;

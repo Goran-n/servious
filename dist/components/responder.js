@@ -19,7 +19,7 @@ var _get2 = _interopRequireDefault(require("@babel/runtime/helpers/get"));
 
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-var axon = require('@dashersw/axon');
+var _responder = _interopRequireDefault(require("../sockets/responder"));
 
 var portfinder = require('portfinder');
 
@@ -37,7 +37,7 @@ function (_Configurable) {
 
     (0, _classCallCheck2["default"])(this, Responder);
     _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Responder).call(this, advertisement, explorerOptions));
-    _this.sock = new axon.types[_this.type]();
+    _this.sock = new _responder["default"]();
 
     _this.sock.on('bind', function () {
       return _this.startExplorer();
@@ -49,7 +49,7 @@ function (_Configurable) {
       }
 
       if (_this.listeners(req.type).length === 0 && _this.explorerOptions.logUnknownEvents) {
-        _this.explorer.log([_this.advertisement.name, '>', "No listeners found for event: ".concat(req.type).yellow]);
+        _this.log([_this.advertisement.name, '>', "No listeners found for event: ".concat(req.type).yellow]);
       }
 
       _this.emit(req.type, req, cb);
@@ -61,7 +61,7 @@ function (_Configurable) {
       _this.sock.bind(port);
 
       _this.sock.server.on('error', function (err) {
-        if (err.code != 'EADDRINUSE') {
+        if (err.code !== 'EADDRINUSE') {
           throw err;
         }
 
