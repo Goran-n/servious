@@ -5,6 +5,7 @@ const Component = require('./component');
 
 
 export default class Responder extends Configurable(Component) {
+
   constructor(advertisement, explorerOptions) {
     super(advertisement, explorerOptions);
 
@@ -44,6 +45,7 @@ export default class Responder extends Configurable(Component) {
       host: this.explorerOptions.address,
       port: advertisement.port
     }, onPort);
+
   }
 
   on(type, listener) {

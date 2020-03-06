@@ -182,6 +182,7 @@ export default class Socket extends Emitter{
     });
 
     debug('%s connect attempt %s:%s', self.type, host, port);
+
     sock.connect(port, host);
     return this;
   }

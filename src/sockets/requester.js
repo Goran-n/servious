@@ -75,9 +75,7 @@ export default class ReqSocket extends Socket{
       fn.id = this.id();
       this.callbacks[ fn.id ] = fn;
       args.push(fn.id);
-    }
 
-    if (sock) {
       sock.write(this.pack(args));
     } else {
       debug('no connected peers');
