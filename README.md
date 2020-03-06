@@ -1,3 +1,4 @@
+![Depencies](https://img.shields.io/david/goran-n/servious) ![Issues](https://img.shields.io/github/issues-raw/goran-n/servious) ![License](https://img.shields.io/npm/l/servious) ![NPM Version](https://img.shields.io/npm/v/servious)
 ![Servious](https://i.ibb.co/vZSVPb6/Selection-005.png)
 
 Servious - Node.js zero-configuration microservices made easy
@@ -18,34 +19,42 @@ npm install servious --save
 
 Example requester.js
 ```js
-import Servious from 'servious'
-const service = new Servious();
+import servious from 'servious'
 
-service.addLink('queue-service', {
-  namespace: 'local',
-  requests: [ 'generate-number' ]
+servious.configure(); // Any global config here
+
+// Link this instance with any other services to whom requests will be made
+servious.addLink({
+  name: 'my-service',
+  service: 'my-service', // The service you wish to target with this link
+  options: {
+    namespace: 'custom-namespace', // Optional namespace
+  }
 });
 
-const sendRequest = async () => {
-  const req = await service.send('queue-service', 'generate-number', { payload: {} });
-  console.log(req)
-};
+// Send a test request to my-service
+const req = await servious.send('my-service', 'generate-number', { payload: { 1: Math.round(Math.random(), 2) } });
+
+console.log(req)
 ```
 
 Example responder.js
 ```js
-import Servious from 'servious'
-const service = new Servious();
+import servious from 'servious'
+
+servious.configure(); // Any global config here
 
 // Register this service as a responder
-service.registerResponder({
-  name: 'queue-service',
-  namespace: 'local',
-  respondsTo: [ 'generate-number' ]
+servious.registerResponder({
+  name: 'my-service', // The name of your service
+  namespace: 'custom-namespace' // Optional namespace
 });
 
-service.on('generate-number', async (req) => {
+// Add a handler for function "generate-number"
+servious.on('generate-number', async (req) => {
   console.log(`Received request ${JSON.stringify(req)}`);
   return Math.random();
 });
 ```
+
+Further documentation pending
