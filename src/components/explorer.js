@@ -83,9 +83,12 @@ export default class Explorer extends Explore {
 
     const logs = [];
 
+    if(!obj.advertisement || !this.advertisement){
+      return logs;
+    }
+
     if (status) {
       const statusLog = status === "online" ? ".online".green : ".offline".red;
-
       logs.push([this.advertisement.namespace], [this.advertisement.name], "=>", obj.advertisement.type.magenta + statusLog + " --");
     }
 
