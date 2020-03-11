@@ -1,6 +1,6 @@
 {
   "name": "servious",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "zero configuration microservices for node.js",
   "author": "Nikic Company Ltd",
   "license": "ISC",
@@ -12,6 +12,8 @@
   "scripts": {
     "build": "babel src -D --watch -d dist",
     "start-dev": "nodemon --exec babel-node src/index.js",
+    "req": "nodemon --exec babel-node examples/requester.js",
+    "res": "nodemon --exec babel-node examples/responder.js",
     "publish": "npm run build"
   },
   "keywords": [
