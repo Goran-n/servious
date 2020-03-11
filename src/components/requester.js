@@ -44,7 +44,7 @@ export default class Requester extends Configurable(Component) {
     this.sock = new ReqSocket();
 
     this.sock.set('retry timeout', 0);
-    this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || 12000;
+    this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || this.timeout;
 
     this.sock.send = this.socketSend.bind(this);
     this.startExplorer();
@@ -119,6 +119,9 @@ export default class Requester extends Configurable(Component) {
   }
   send(...args) {
     const hasCallback = typeof args[ args.length - 1 ] == 'function';
+
+    console.log(this.timeout)
+
     const timeout = args[ 0 ].__timeout || this.timeout;
 
     if (hasCallback) {

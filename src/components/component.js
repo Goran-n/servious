@@ -13,7 +13,7 @@ module.exports = class Component extends EventEmitter {
 
     advertisement.key = `${this.constructor.environment }$$${ advertisement.key || ""}`;
 
-    this.timeout = 30;
+    this.timeout = 15000;
     this.advertisement = advertisement;
     this.advertisement.node_type = this.type;
 
