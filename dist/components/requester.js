@@ -164,7 +164,6 @@ function (_Configurable) {
       }
 
       var hasCallback = typeof args[args.length - 1] == 'function';
-      console.log(this.timeout);
       var timeout = args[0].__timeout || this.timeout;
 
       if (hasCallback) {

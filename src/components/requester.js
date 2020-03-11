@@ -120,8 +120,6 @@ export default class Requester extends Configurable(Component) {
   send(...args) {
     const hasCallback = typeof args[ args.length - 1 ] == 'function';
 
-    console.log(this.timeout)
-
     const timeout = args[ 0 ].__timeout || this.timeout;
 
     if (hasCallback) {
