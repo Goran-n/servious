@@ -117,6 +117,10 @@ function (_Explore) {
     value: function statusLogger(obj, status) {
       var logs = [];
 
+      if (!obj.advertisement || !this.advertisement) {
+        return logs;
+      }
+
       if (status) {
         var statusLog = status === "online" ? ".online".green : ".offline".red;
         logs.push([this.advertisement.namespace], [this.advertisement.name], "=>", obj.advertisement.type.magenta + statusLog + " --");

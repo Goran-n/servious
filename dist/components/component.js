@@ -43,7 +43,7 @@ function (_EventEmitter) {
 
     }));
     advertisement.key = "".concat(_this.constructor.environment, "$$").concat(advertisement.key || "");
-    _this.timeout = 30;
+    _this.timeout = 15000;
     _this.advertisement = advertisement;
     _this.advertisement.node_type = _this.type;
     _this.explorerOptions = _objectSpread({}, _explorer["default"].defaults, {}, explorerOptions);

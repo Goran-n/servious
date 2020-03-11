@@ -75,7 +75,7 @@ function (_Configurable) {
 
     _this.sock.set('retry timeout', 0);
 
-    _this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || 12000;
+    _this.timeout = advertisement.timeout || process.env.SERVIOUS_REQ_TIMEOUT || _this.timeout;
     _this.sock.send = _this.socketSend.bind((0, _assertThisInitialized2["default"])(_this));
 
     _this.startExplorer();
@@ -164,6 +164,7 @@ function (_Configurable) {
       }
 
       var hasCallback = typeof args[args.length - 1] == 'function';
+      console.log(this.timeout);
       var timeout = args[0].__timeout || this.timeout;
 
       if (hasCallback) {
